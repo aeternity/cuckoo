@@ -18,7 +18,11 @@ int main(int argc, char **argv) {
 #else
   bool showcycle = 0;
 #endif
+#ifdef __FreeBSD__
+  struct timespec time0, time1;
+#else
   struct timeval time0, time1;
+#endif
   u32 timems;
   char header[HEADERLEN];
   u32 len;
@@ -77,12 +81,21 @@ int main(int argc, char **argv) {
 
   u32 sumnsols = 0;
   for (u32 r = 0; r < range; r++) {
+#ifdef __FreeBSD__
+    clock_gettime(CLOCK_REALTIME_FAST, &time0);
+#else
     gettimeofday(&time0, 0);
+#endif
     ctx.setheadernonce(header, sizeof(header), nonce + r);
     printf("nonce %d\n", nonce+r);
     u32 nsols = ctx.solve();
+#ifdef __FreeBSD__
+    clock_gettime(CLOCK_REALTIME_FAST, &time1);
+    timems = (time1.tv_sec-time0.tv_sec)*1000 + (time1.tv_nsec-time0.tv_nsec)/1000000;
+#else
     gettimeofday(&time1, 0);
     timems = (time1.tv_sec-time0.tv_sec)*1000 + (time1.tv_usec-time0.tv_usec)/1000;
+#endif
     printf("Time: %d ms\n", timems);
 
     for (unsigned s = 0; s < nsols; s++) {

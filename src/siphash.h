@@ -3,7 +3,11 @@
 #include <stdint.h>    // for types uint32_t,uint64_t
 #include <immintrin.h> // for _mm256_* intrinsics
 #ifndef __APPLE__
+#ifdef __FreeBSD__
+#include <sys/endian.h>
+#else
 #include <endian.h>    // for htole32/64
+#endif
 #else
 #include <machine/endian.h>
 #include <libkern/OSByteOrder.h>

@@ -3,7 +3,14 @@ sudo: false
 language: cpp
 env:
   - JOB=cuckoo
+  - JOB=cuckoo-nonce-u64
   - JOB=doc
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode8.3 # [`xcode8.3` is Xcode 8.3.3 on OS X 10.12](https://docs.travis-ci.com/user/reference/osx#OS-X-Version)
+      language: generic
+      env: JOB=cuckoo-nonce-u64
 addons:
   apt:
     packages:
@@ -17,6 +24,7 @@ before_script:
   - echo "The library path variable value is ${LIBP:?}"
 script:
   - if test cuckoo = "${JOB:?}"; then ( cd src/crypto && env ${LIBV:?}="${LIBP:?}" make && cd ../cuckoo && make; ); fi
+  - if test cuckoo-nonce-u64 = "${JOB:?}"; then ( make -C src/cuckoo verifytest-nonce-u64; ); fi
   - if test doc = "${JOB:?}"; then ( cd doc && make cuckoo.pdf; ); fi
 after_success:
   - |

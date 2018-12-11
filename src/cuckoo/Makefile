@@ -25,11 +25,17 @@ leantest:       lean19x1
 verifytest:     lean19x1 verify19
 	./lean19x1 -n 38 | grep ^Sol | ./verify19 -n 38
 
+verifytest-nonce-u64: mean29x1 verify29
+	./mean29x1 -n 9223372036854775808 | grep '^Sol.*9223372036854775808' | ./verify29 -n 9223372036854775808
+
 simple19:	../crypto/siphash.h cuckoo.h cyclebase.hpp simple.cpp Makefile
 	$(GPP) -o $@ -DIDXSHIFT=0 -DPROOFSIZE=42 -DEDGEBITS=19 simple.cpp $(BLAKE_2B_SRC)
 
 verify19:	../crypto/siphash.h cuckoo.h cuckoo.c simple.cpp Makefile
 	$(GPP) -o $@ -DPROOFSIZE=42 -DEDGEBITS=19 cuckoo.c $(BLAKE_2B_SRC)
+
+verify29:	../crypto/siphash.h cuckoo.h cuckoo.c simple.cpp Makefile
+	$(GPP) -o $@ -DPROOFSIZE=42 -DEDGEBITS=29 cuckoo.c $(BLAKE_2B_SRC)
 
 simple29:	../crypto/siphash.h cuckoo.h cyclebase.hpp simple.cpp Makefile
 	$(GPP) -o $@ -DIDXSHIFT=0 -DPROOFSIZE=42 -DEDGEBITS=29 simple.cpp $(BLAKE_2B_SRC)

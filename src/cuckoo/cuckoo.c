@@ -13,7 +13,7 @@
 
 int main(int argc, char **argv) {
   const char *header = "";
-  int nonce = 0;
+  u64 nonce = 0;
   int c;
   while ((c = getopt (argc, argv, "h:n:")) != -1) {
     switch (c) {
@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
         header = optarg;
         break;
       case 'n':
-        nonce = atoi(optarg);
+        nonce = strtoull(optarg, NULL, 10);
         break;
     }
   }
@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
   ((u32 *)headernonce)[HEADERLEN/sizeof(u32)-1] = htole32(nonce);
   siphash_keys keys;
   setheader(headernonce, sizeof(headernonce), &keys);
-  printf("Verifying size %d proof for cuckoo%d(\"%s\",%d)\n",
+  printf("Verifying size %d proof for cuckoo%d(\"%s\",%llu)\n",
                PROOFSIZE, EDGEBITS+1, header, nonce);
   for (int nsols=0; scanf(" Solution") == 0; nsols++) {
     word_t nonces[PROOFSIZE];
